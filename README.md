@@ -11,7 +11,7 @@ TypingTales is an engaging web-based typing practice application designed specif
   - Green: Correctly typed text
   - Red: Mistakes
   - Blue highlight: Current character
-- **Progress Tracking**: 
+- **Progress Tracking**:
   - Score tracking
   - Level progression (5 levels)
   - Session history
@@ -34,12 +34,14 @@ TypingTales is an engaging web-based typing practice application designed specif
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/typing-tales.git
 cd typing-tales
 ```
 
 2. Set up git hooks (for development):
+
 ```bash
 # Copy pre-commit and pre-push hooks
 cp .hooks/pre-commit .git/hooks/
@@ -49,6 +51,7 @@ chmod +x .git/hooks/pre-push
 ```
 
 3. Set up a local web server (required for loading stories.json):
+
 ```bash
 # Using Python 3
 python3 -m http.server 8000
@@ -58,6 +61,7 @@ npx serve
 ```
 
 4. Open your browser and visit:
+
 ```
 http://localhost:8000
 ```
@@ -158,4 +162,4 @@ For support, please open an issue in the GitHub repository or contact us at supp
 
 ## 🌐 Website
 
-Visit [typingtales.org](https://typingtales.org) to try the application online. 
+Visit [typingtales.org](https://typingtales.org) to try the application online.
