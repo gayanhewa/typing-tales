@@ -78,6 +78,12 @@
                     <div class="text-right">
                         <p>Score: <span x-text="score"></span></p>
                         <p>Time Left: <span x-text="timeLeft"></span>s</p>
+                        <button
+                            @click="logout"
+                            class="mt-2 text-sm text-red-600 hover:text-red-800"
+                        >
+                            Logout
+                        </button>
                     </div>
                 </div>
 
@@ -128,12 +134,20 @@
                     <p class="text-lg mb-4" x-show="!completedSuccessfully">
                         You ran out of time. Keep practicing!
                     </p>
-                    <button
-                        @click="resetGame"
-                        class="w-full bg-green-500 text-white p-4 rounded-lg hover:bg-green-600 transition duration-300"
-                    >
-                        Play Again
-                    </button>
+                    <div class="space-y-3">
+                        <button
+                            @click="playAgain"
+                            class="w-full bg-green-500 text-white p-4 rounded-lg hover:bg-green-600 transition duration-300"
+                        >
+                            Play Another Story
+                        </button>
+                        <button
+                            @click="logout"
+                            class="w-full bg-red-500 text-white p-4 rounded-lg hover:bg-red-600 transition duration-300"
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </template>
@@ -147,6 +161,7 @@
                 playerName: '',
                 playerGender: '',
                 stories: [],
+                usedStoryIds: new Set(), // Track used stories
                 // Story Management
                 currentStory: null,
                 currentStoryText: '',
@@ -166,6 +181,17 @@
                         const response = await fetch('stories.json');
                         const data = await response.json();
                         this.stories = data.stories;
+                        
+                        // Check for saved game state
+                        const savedState = localStorage.getItem('gameState');
+                        if (savedState) {
+                            const state = JSON.parse(savedState);
+                            this.playerName = state.playerName;
+                            this.playerGender = state.playerGender;
+                            this.usedStoryIds = new Set(state.usedStoryIds);
+                            this.gameState = 'playing';
+                            this.startGame();
+                        }
                     } catch (error) {
                         console.error('Error loading stories:', error);
                         alert('Failed to load stories. Please refresh the page.');
@@ -207,28 +233,58 @@
                     // Validate name
                     this.playerName = this.validateName(this.playerName);
 
-                    // Filter stories by player's gender
+                    // Filter stories by player's gender and exclude used stories
                     const availableStories = this.stories.filter(story => {
-                        // Map the story gender to match our radio button values
                         const storyGender = story.gender === 'boy' ? 'male' : 
                                           story.gender === 'girl' ? 'female' : 
                                           story.gender;
-                        return storyGender === this.playerGender;
+                        return storyGender === this.playerGender && !this.usedStoryIds.has(story.id);
                     });
 
-                    // If no stories available for the selected gender, use all stories
+                    // If no new stories available for the selected gender, reset used stories
                     if (availableStories.length === 0) {
-                        availableStories = this.stories;
+                        this.usedStoryIds.clear();
+                        return this.startGame(); // Retry with reset used stories
                     }
 
                     // Select a random story
                     let selectedStory = availableStories[Math.floor(Math.random() * availableStories.length)];
+                    this.usedStoryIds.add(selectedStory.id);
 
                     // Replace name in the story
                     this.currentStory = this.replaceNameInStory(selectedStory, this.playerName);
                     this.currentStoryText = this.currentStory.text;
                     this.gameState = 'playing';
                     this.startTimer();
+
+                    // Save game state
+                    this.saveGameState();
+                },
+                // Save Game State
+                saveGameState() {
+                    const state = {
+                        playerName: this.playerName,
+                        playerGender: this.playerGender,
+                        usedStoryIds: Array.from(this.usedStoryIds)
+                    };
+                    localStorage.setItem('gameState', JSON.stringify(state));
+                },
+                // Play Again Method
+                playAgain() {
+                    this.userInput = '';
+                    this.characterIndex = 0;
+                    this.score = 0;
+                    this.progress = 0;
+                    this.timeLeft = 600;
+                    this.currentLevel = 1;
+                    this.completedSuccessfully = false;
+                    this.startGame();
+                },
+                // Logout Method
+                logout() {
+                    clearInterval(this.timer);
+                    localStorage.removeItem('gameState');
+                    this.resetGame();
                 },
                 // Timer Management
                 startTimer() {
@@ -288,6 +344,7 @@
                     this.timeLeft = 600;
                     this.currentLevel = 1;
                     this.completedSuccessfully = false;
+                    this.usedStoryIds.clear();
                 }
             }
         }
