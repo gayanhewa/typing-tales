@@ -36,8 +36,20 @@ function storyTypingGame() {
           this.playerName = state.playerName;
           this.playerGender = state.playerGender;
           this.usedStoryIds = new Set(state.usedStoryIds);
-          this.gameState = "playing";
-          this.startGame();
+          this.currentStory = state.currentStory;
+          this.currentStoryText = state.currentStoryText;
+          this.userInput = state.userInput;
+          this.characterIndex = state.characterIndex;
+          this.score = state.score;
+          this.timeLeft = state.timeLeft;
+          this.currentLevel = state.currentLevel;
+          this.progress = state.progress;
+          this.gameState = state.gameState;
+
+          // If we were in the middle of a game, restore it
+          if (this.gameState === "playing") {
+            this.startTimer();
+          }
         }
       } catch (error) {
         console.error("Error loading stories:", error);
@@ -46,12 +58,7 @@ function storyTypingGame() {
     },
     // Name Replacement Method
     replaceNameInStory(story, playerName) {
-      const namePlaceholders = [
-        "{{NAME}}",
-        "[NAME]",
-        "{PLAYER_NAME}",
-        "PROTAGONIST_NAME",
-      ];
+      const namePlaceholders = ["{{NAME}}", "[NAME]", "{PLAYER_NAME}", "PROTAGONIST_NAME"];
 
       let modifiedStory = story.text;
 
@@ -61,7 +68,7 @@ function storyTypingGame() {
 
       return {
         ...story,
-        text: modifiedStory,
+        text: modifiedStory
       };
     },
     // Validate and Prepare Name
@@ -85,14 +92,8 @@ function storyTypingGame() {
       // Filter stories by player's gender and exclude used stories
       const availableStories = this.stories.filter((story) => {
         const storyGender =
-          story.gender === "boy"
-            ? "male"
-            : story.gender === "girl"
-              ? "female"
-              : story.gender;
-        return (
-          storyGender === this.playerGender && !this.usedStoryIds.has(story.id)
-        );
+          story.gender === "boy" ? "male" : story.gender === "girl" ? "female" : story.gender;
+        return storyGender === this.playerGender && !this.usedStoryIds.has(story.id);
       });
 
       // If no new stories available for the selected gender, reset used stories
@@ -102,15 +103,11 @@ function storyTypingGame() {
       }
 
       // Select a random story
-      let selectedStory =
-        availableStories[Math.floor(Math.random() * availableStories.length)];
+      let selectedStory = availableStories[Math.floor(Math.random() * availableStories.length)];
       this.usedStoryIds.add(selectedStory.id);
 
       // Replace name in the story
-      this.currentStory = this.replaceNameInStory(
-        selectedStory,
-        this.playerName,
-      );
+      this.currentStory = this.replaceNameInStory(selectedStory, this.playerName);
       this.currentStoryText = this.currentStory.text;
       this.gameState = "playing";
       this.startTimer();
@@ -124,6 +121,15 @@ function storyTypingGame() {
         playerName: this.playerName,
         playerGender: this.playerGender,
         usedStoryIds: Array.from(this.usedStoryIds),
+        currentStory: this.currentStory,
+        currentStoryText: this.currentStoryText,
+        userInput: this.userInput,
+        characterIndex: this.characterIndex,
+        score: this.score,
+        timeLeft: this.timeLeft,
+        currentLevel: this.currentLevel,
+        progress: this.progress,
+        gameState: this.gameState
       };
       localStorage.setItem("gameState", JSON.stringify(state));
     },
@@ -154,17 +160,18 @@ function storyTypingGame() {
         // Level progression
         const totalLength = this.currentStoryText.length;
         const levelLength = Math.floor(totalLength / 5);
-        const currentLevelProgress =
-          Math.floor(this.characterIndex / levelLength) + 1;
+        const currentLevelProgress = Math.floor(this.characterIndex / levelLength) + 1;
 
         this.currentLevel = Math.min(currentLevelProgress, 5);
         this.progress = (this.characterIndex / totalLength) * 100;
 
+        // Save game state every 30 seconds
+        if (this.timeLeft % 30 === 0) {
+          this.saveGameState();
+        }
+
         // Game over conditions
-        if (
-          this.timeLeft <= 0 ||
-          this.characterIndex >= this.currentStoryText.length
-        ) {
+        if (this.timeLeft <= 0 || this.characterIndex >= this.currentStoryText.length) {
           this.endGame();
         }
       }, 1000);
@@ -172,9 +179,7 @@ function storyTypingGame() {
     // Input Checking
     checkInput() {
       // Check if user input matches the next characters
-      if (
-        this.userInput === this.currentStoryText.slice(0, this.userInput.length)
-      ) {
+      if (this.userInput === this.currentStoryText.slice(0, this.userInput.length)) {
         this.characterIndex = this.userInput.length;
         this.score = this.characterIndex;
       } else {
@@ -182,6 +187,8 @@ function storyTypingGame() {
         this.characterIndex = this.userInput.length;
         this.score = this.characterIndex;
       }
+      // Save game state after each input
+      this.saveGameState();
     },
     // Handle Space Key
     handleSpace(event) {
@@ -191,26 +198,25 @@ function storyTypingGame() {
         this.userInput += " ";
         this.characterIndex++;
         this.score = this.characterIndex;
+        // Save game state after space key
+        this.saveGameState();
       }
     },
     // End Game Method
     endGame() {
       clearInterval(this.timer);
       this.gameState = "gameOver";
-      this.completedSuccessfully =
-        this.characterIndex >= this.currentStoryText.length;
+      this.completedSuccessfully = this.characterIndex >= this.currentStoryText.length;
 
       // Save game history
-      const gameHistory = JSON.parse(
-        localStorage.getItem("storyTyperHistory") || "[]",
-      );
+      const gameHistory = JSON.parse(localStorage.getItem("storyTyperHistory") || "[]");
       gameHistory.push({
         name: this.playerName,
         gender: this.playerGender,
         story: this.currentStory.title,
         score: this.score,
         completed: this.completedSuccessfully,
-        date: new Date().toISOString(),
+        date: new Date().toISOString()
       });
       localStorage.setItem("storyTyperHistory", JSON.stringify(gameHistory));
     },
@@ -227,16 +233,16 @@ function storyTypingGame() {
       this.currentLevel = 1;
       this.completedSuccessfully = false;
       this.usedStoryIds.clear();
-    },
+    }
   };
 }
 
 // Make it available globally for browser
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.storyTypingGame = storyTypingGame;
 }
 
 // Export for testing
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = { storyTypingGame };
 }

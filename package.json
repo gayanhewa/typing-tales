@@ -5,12 +5,22 @@
   "type": "module",
   "scripts": {
     "test": "bun test --preload ./src/test/setup.js",
-    "test:watch": "bun test --watch --preload ./src/test/setup.js"
+    "test:watch": "bun test --watch --preload ./src/test/setup.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "bun-types": "latest"
   },
   "dependencies": {
     "prettier": "^3.5.3"
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": false,
+    "trailingComma": "none",
+    "printWidth": 100,
+    "tabWidth": 2,
+    "endOfLine": "lf"
   }
 }
