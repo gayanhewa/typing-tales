@@ -1,4 +1,4 @@
-// Export the function for testing
+// Define the game function
 function storyTypingGame() {
   return {
     // Game State
@@ -232,9 +232,11 @@ function storyTypingGame() {
 }
 
 // Make it available globally for browser
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   window.storyTypingGame = storyTypingGame;
 }
 
 // Export for testing
-export { storyTypingGame };
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { storyTypingGame };
+}
