@@ -1,5 +1,5 @@
-// Make sure the function is available globally
-window.storyTypingGame = function storyTypingGame() {
+// Export the function for testing
+function storyTypingGame() {
   return {
     // Game State
     gameState: "registration",
@@ -229,4 +229,12 @@ window.storyTypingGame = function storyTypingGame() {
       this.usedStoryIds.clear();
     },
   };
-};
+}
+
+// Make it available globally for browser
+if (typeof window !== "undefined") {
+  window.storyTypingGame = storyTypingGame;
+}
+
+// Export for testing
+export { storyTypingGame };

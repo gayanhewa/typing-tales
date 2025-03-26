@@ -2,10 +2,10 @@
   "name": "typing-tales",
   "version": "1.0.0",
   "description": "A typing practice game for kids with personalized stories",
-  "main": "game.js",
+  "type": "module",
   "scripts": {
-    "test": "bun test",
-    "test:watch": "bun test --watch"
+    "test": "bun test --preload ./src/test/setup.js",
+    "test:watch": "bun test --watch --preload ./src/test/setup.js"
   },
   "devDependencies": {
     "bun-types": "latest"

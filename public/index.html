@@ -111,9 +111,11 @@
     }
     </script>
     
-    <!-- Existing Scripts -->
+    <!-- Load game.js first -->
     <script src="game.js"></script>
+    <!-- Then load Alpine.js -->
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- Finally load Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -123,7 +125,7 @@
 </head>
 <body class="bg-gradient-to-r from-blue-100 to-blue-200 min-h-screen flex flex-col p-4">
     <div
-        x-data="storyTypingGame()"
+        x-data="window.storyTypingGame()"
         x-init="initializeStories()"
         class="container mx-auto max-w-4xl bg-white rounded-xl shadow-lg p-6 flex-grow"
     >
