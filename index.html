@@ -103,7 +103,7 @@
                     "name": "How long does each typing session last?",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "Each session has a 10-minute time limit, but you can play as many sessions as you want. The game tracks your progress and helps you improve your typing speed over time."
+                        "text": "Each session has a 15-minute time limit, but you can play as many sessions as you want. The game tracks your progress and helps you improve your typing speed over time."
                     }
                 }
             ]
@@ -120,11 +120,11 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-blue-200 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-r from-blue-100 to-blue-200 min-h-screen flex flex-col p-4">
     <div
         x-data="storyTypingGame()"
         x-init="initializeStories()"
-        class="container mx-auto max-w-4xl bg-white rounded-xl shadow-lg p-6"
+        class="container mx-auto max-w-4xl bg-white rounded-xl shadow-lg p-6 flex-grow"
     >
         <!-- Registration Screen -->
         <template x-if="gameState === 'registration'">
@@ -189,7 +189,7 @@
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow">
                             <h3 class="font-bold text-lg mb-2">How long does each typing session last?</h3>
-                            <p class="text-gray-600">Each session has a 10-minute time limit, but you can play as many sessions as you want. The game tracks your progress and helps you improve your typing speed over time.</p>
+                            <p class="text-gray-600">Each session has a 15-minute time limit, but you can play as many sessions as you want. The game tracks your progress and helps you improve your typing speed over time.</p>
                         </div>
                     </div>
                 </div>
@@ -294,6 +294,11 @@
         </template>
     </div>
 
+    <!-- Footer -->
+    <footer class="text-center py-4 text-gray-600 bg-white/80 backdrop-blur-sm mt-4">
+        Made with ❤️ for Jehan and Liana
+    </footer>
+
     <script>
         function storyTypingGame() {
             return {
@@ -314,7 +319,7 @@
                 hasMistake: false,
                 score: 0,
                 progress: 0,
-                timeLeft: 600, // 10 minutes total
+                timeLeft: 900, // 15 minutes total
                 timer: null,
                 // Game Outcomes
                 completedSuccessfully: false,
@@ -420,7 +425,7 @@
                     this.hasMistake = false;
                     this.score = 0;
                     this.progress = 0;
-                    this.timeLeft = 600;
+                    this.timeLeft = 900;
                     this.currentLevel = 1;
                     this.completedSuccessfully = false;
                     this.startGame();
@@ -499,7 +504,7 @@
                     this.hasMistake = false;
                     this.score = 0;
                     this.progress = 0;
-                    this.timeLeft = 600;
+                    this.timeLeft = 900;
                     this.currentLevel = 1;
                     this.completedSuccessfully = false;
                     this.usedStoryIds.clear();

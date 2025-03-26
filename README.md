@@ -16,7 +16,7 @@ TypingTales is an engaging web-based typing practice application designed specif
   - Level progression (5 levels)
   - Session history
 - **Session Management**:
-  - 10-minute time limit per session
+  - 15-minute time limit per session
   - Multiple sessions allowed
   - Progress saved between sessions
 - **No Repeat Stories**: Stories don't repeat until all stories for a gender have been used
