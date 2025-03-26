@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://typingtales.org/sitemap.xml 
