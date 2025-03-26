@@ -88,28 +88,33 @@
                 </div>
 
                 <!-- Story Display -->
-                <div class="mb-6 p-4 bg-blue-50 rounded-lg h-64 overflow-auto">
-                    <p class="text-lg leading-relaxed">
-                        <template x-for="(char, index) in currentStoryText" :key="index">
-                            <span
-                                :class="{
-                                    'text-green-600': index < characterIndex,
-                                    'text-2xl font-bold': index === characterIndex,
-                                    'text-gray-400': index > characterIndex
-                                }"
-                                x-text="char"
-                            ></span>
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg h-96 overflow-auto">
+                    <div class="text-center space-y-4">
+                        <template x-for="(line, lineIndex) in currentStoryText.split('\n')" :key="lineIndex">
+                            <p class="text-2xl leading-relaxed">
+                                <template x-for="(char, charIndex) in line" :key="charIndex">
+                                    <span
+                                        :class="{
+                                            'text-green-600': lineIndex * line.length + charIndex < characterIndex,
+                                            'text-3xl font-bold bg-blue-100 rounded px-1': lineIndex * line.length + charIndex === characterIndex,
+                                            'text-red-500': lineIndex * line.length + charIndex < characterIndex && userInput[lineIndex * line.length + charIndex] !== currentStoryText[lineIndex * line.length + charIndex],
+                                            'text-gray-400': lineIndex * line.length + charIndex > characterIndex
+                                        }"
+                                        x-text="char"
+                                    ></span>
+                                </template>
+                            </p>
                         </template>
-                    </p>
+                    </div>
                 </div>
 
-                <!-- Typing Input -->
+                <!-- Typing Area (Hidden Input) -->
                 <input
                     x-model="userInput"
                     @input="checkInput"
+                    @keydown.space.prevent="handleSpace"
                     type="text"
-                    placeholder="Start typing the story here..."
-                    class="w-full p-4 border-2 border-blue-300 rounded-lg text-center text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="absolute opacity-0"
                     autofocus
                 >
 
@@ -320,8 +325,19 @@
                         this.characterIndex = this.userInput.length;
                         this.score = this.characterIndex;
                     } else {
-                        // Optional: Add error handling or penalty
-                        this.userInput = this.userInput.slice(0, -1);
+                        // Don't remove the last character, just mark it as incorrect
+                        this.characterIndex = this.userInput.length;
+                        this.score = this.characterIndex;
+                    }
+                },
+                // Handle Space Key
+                handleSpace(event) {
+                    event.preventDefault();
+                    const nextChar = this.currentStoryText[this.characterIndex];
+                    if (nextChar === ' ') {
+                        this.userInput += ' ';
+                        this.characterIndex++;
+                        this.score = this.characterIndex;
                     }
                 },
                 // End Game Method
