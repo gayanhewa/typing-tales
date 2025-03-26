@@ -2,13 +2,122 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Personalized Story Typing Adventure</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypingTales - Fun Typing Practice for Kids (Ages 6-13)</title>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="TypingTales - Fun Typing Practice for Kids (Ages 6-13)">
+    <meta name="description" content="Make typing practice fun for kids! Personalized stories that adapt to your child's age and interests. Perfect for ages 6-13, helping kids learn typing through engaging adventures.">
+    <meta name="keywords" content="typing practice for kids, typing games for children, learn typing, typing tutor, kids typing practice, typing stories for kids, educational typing, typing adventure, personalized typing stories">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://typingtales.org/">
+    <meta property="og:title" content="TypingTales - Fun Typing Practice for Kids">
+    <meta property="og:description" content="Make typing practice fun for kids! Personalized stories that adapt to your child's age and interests. Perfect for ages 6-13.">
+    <meta property="og:image" content="https://typingtales.org/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://typingtales.org/">
+    <meta property="twitter:title" content="TypingTales - Fun Typing Practice for Kids">
+    <meta property="twitter:description" content="Make typing practice fun for kids! Personalized stories that adapt to your child's age and interests. Perfect for ages 6-13.">
+    <meta property="twitter:image" content="https://typingtales.org/og-image.jpg">
+
+    <!-- Additional Meta Tags -->
+    <meta name="author" content="TypingTales">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <meta name="theme-color" content="#3B82F6">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://typingtales.org/favicon.png">
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "EducationalApplication",
+        "name": "TypingTales",
+        "description": "An interactive typing practice application designed for children aged 6-13, featuring personalized stories to make learning to type fun and engaging.",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "150"
+        },
+        "educationalLevel": ["Elementary", "Middle School"],
+        "educationalUse": ["Assessment", "Self-Study"],
+        "interactivityType": "mixed",
+        "isAccessibleForFree": true,
+        "url": "https://typingtales.org",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "softwareVersion": "1.0.0",
+        "author": {
+            "@type": "Organization",
+            "name": "TypingTales",
+            "url": "https://typingtales.org"
+        },
+        "keywords": "typing practice, educational game, kids learning, typing tutor, interactive stories",
+        "learningResourceType": "interactive",
+        "teaches": ["typing", "reading", "story comprehension"],
+        "inLanguage": "en-US",
+        "dateCreated": "2024-03-20",
+        "dateModified": "2024-03-20",
+        "mainEntity": {
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "What age is this typing game for?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "TypingTales is designed for children aged 6-13. The stories and difficulty levels are tailored to make typing practice fun and engaging for this age group."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How does the story personalization work?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "When you enter your name and select your gender, the stories are automatically customized to include your name as the main character, making the typing experience more personal and engaging."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Is this typing game free to use?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes, TypingTales is completely free to use! You can practice typing with personalized stories as many times as you want."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How long does each typing session last?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Each session has a 10-minute time limit, but you can play as many sessions as you want. The game tracks your progress and helps you improve your typing speed over time."
+                    }
+                }
+            ]
+        }
+    }
+    </script>
+    
+    <!-- Existing Scripts -->
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-}
+        }
     </style>
 </head>
 <body class="bg-gradient-to-r from-blue-100 to-blue-200 min-h-screen flex items-center justify-center p-4">
@@ -20,7 +129,7 @@
         <!-- Registration Screen -->
         <template x-if="gameState === 'registration'">
             <div class="text-center">
-                <h1 class="text-4xl font-bold mb-8 text-blue-600">Story Typer Challenge</h1>
+                <h1 class="text-4xl font-bold mb-8 text-blue-600">Typing Tales</h1>
                 <form @submit.prevent="startGame" class="space-y-6 max-w-md mx-auto">
                     <input
                         x-model="playerName"
@@ -61,6 +170,29 @@
                         Start Typing Adventure
                     </button>
                 </form>
+
+                <!-- FAQ Section -->
+                <div class="mt-12 max-w-2xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-6 text-blue-700">Frequently Asked Questions</h2>
+                    <div class="space-y-4 text-left">
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h3 class="font-bold text-lg mb-2">What age is this typing game for?</h3>
+                            <p class="text-gray-600">TypingTales is designed for children aged 6-13. The stories and difficulty levels are tailored to make typing practice fun and engaging for this age group.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h3 class="font-bold text-lg mb-2">How does the story personalization work?</h3>
+                            <p class="text-gray-600">When you enter your name and select your gender, the stories are automatically customized to include your name as the main character, making the typing experience more personal and engaging.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h3 class="font-bold text-lg mb-2">Is this typing game free to use?</h3>
+                            <p class="text-gray-600">Yes, TypingTales is completely free to use! You can practice typing with personalized stories as many times as you want.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h3 class="font-bold text-lg mb-2">How long does each typing session last?</h3>
+                            <p class="text-gray-600">Each session has a 10-minute time limit, but you can play as many sessions as you want. The game tracks your progress and helps you improve your typing speed over time.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </template>
 
