@@ -89,13 +89,17 @@
 
                 <!-- Story Display -->
                 <div class="mb-6 p-4 bg-blue-50 rounded-lg h-64 overflow-auto">
-                    <p
-                        class="text-lg leading-relaxed":class="{
-                            'text-gray-400': characterIndex > 0,
-                            'text-black': characterIndex === 0
-}"
-                    >
-                        <span x-text="currentStoryText.slice(0, characterIndex)"></span><span x-text="currentStoryText.slice(characterIndex)" class="text-gray-400"></span>
+                    <p class="text-lg leading-relaxed">
+                        <template x-for="(char, index) in currentStoryText" :key="index">
+                            <span
+                                :class="{
+                                    'text-green-600': index < characterIndex,
+                                    'text-2xl font-bold': index === characterIndex,
+                                    'text-gray-400': index > characterIndex
+                                }"
+                                x-text="char"
+                            ></span>
+                        </template>
                     </p>
                 </div>
 
@@ -169,6 +173,8 @@
                 // Typing Mechanics
                 userInput: '',
                 characterIndex: 0,
+                currentWordIndex: 0,
+                hasMistake: false,
                 score: 0,
                 progress: 0,
                 timeLeft: 600, // 10 minutes total
@@ -273,6 +279,8 @@
                 playAgain() {
                     this.userInput = '';
                     this.characterIndex = 0;
+                    this.currentWordIndex = 0;
+                    this.hasMistake = false;
                     this.score = 0;
                     this.progress = 0;
                     this.timeLeft = 600;
@@ -339,6 +347,8 @@
                     this.gameState = 'registration';
                     this.userInput = '';
                     this.characterIndex = 0;
+                    this.currentWordIndex = 0;
+                    this.hasMistake = false;
                     this.score = 0;
                     this.progress = 0;
                     this.timeLeft = 600;
