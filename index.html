@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personalized Story Typing Adventure</title>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+}
+    </style>
+</head>
+<body class="bg-gradient-to-r from-blue-100 to-blue-200 min-h-screen flex items-center justify-center p-4">
+    <div
+        x-data="storyTypingGame()"
+        x-init="initializeStories()"
+        class="container mx-auto max-w-4xl bg-white rounded-xl shadow-lg p-6"
+    >
+        <!-- Registration Screen -->
+        <template x-if="gameState === 'registration'">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold mb-8 text-blue-600">Story Typer Challenge</h1>
+                <form @submit.prevent="startGame" class="space-y-6 max-w-md mx-auto">
+                    <input
+                        x-model="playerName"
+                        type="text"
+                        placeholder="Your Name"
+                        required
+                        class="w-full p-4 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                    <select
+                        x-model="playerGender"
+                        required
+                        class="w-full p-4 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">Select Gender</option>
+                        <option value="boy">Boy</option>
+                        <option value="girl">Girl</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <input
+                        x-model.number="playerAge"
+                        type="number"
+                        placeholder="Your Age"
+                        min="6"
+                        max="13"
+                        required
+                        class="w-full p-4 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                    <button
+                        type="submit"
+                        class="w-full bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600 transition duration-300"
+                    >
+                        Start Typing Adventure
+                    </button>
+                </form>
+            </div>
+        </template>
+
+        <!-- Game Screen -->
+        <template x-if="gameState === 'playing'">
+            <div>
+                <!-- Game Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 x-text="currentStory.title" class="text-2xl font-bold text-blue-700"></h2>
+                        <p class="text-sm text-gray-600">
+                            Level <span x-text="currentLevel"></span> / 5
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <p>Score: <span x-text="score"></span></p>
+                        <p>Time Left: <span x-text="timeLeft"></span>s</p>
+                    </div>
+                </div>
+
+                <!-- Story Display -->
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg h-64 overflow-auto">
+                    <p
+                        class="text-lg leading-relaxed":class="{
+                            'text-gray-400': characterIndex > 0,
+                            'text-black': characterIndex === 0
+}"
+                    >
+                        <span x-text="currentStoryText.slice(0, characterIndex)"></span><span x-text="currentStoryText.slice(characterIndex)" class="text-gray-400"></span>
+                    </p>
+                </div>
+
+                <!-- Typing Input -->
+                <input
+                    x-model="userInput"
+                    @input="checkInput"
+                    type="text"
+                    placeholder="Start typing the story here..."
+                    class="w-full p-4 border-2 border-blue-300 rounded-lg text-center text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    autofocus
+                >
+
+                <!-- Progress Bar -->
+                <div class="mt-4">
+                    <div class="bg-blue-200 h-2 rounded-full overflow-hidden">
+                        <div
+                            :style="`width: ${progress}%`"
+                            class="bg-blue-500 h-full transition-all duration-300"
+                        ></div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Game Over Screen -->
+        <template x-if="gameState === 'gameOver'">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold mb-6 text-blue-700">
+                    <span x-text="completedSuccessfully ? 'Congratulations!' : 'Game Over'"></span>
+                </h2>
+                <div class="bg-blue-50 p-6 rounded-lg max-w-md mx-auto">
+                    <p class="text-xl mb-4">
+                        Final Score: <span x-text="score" class="font-bold text-blue-600"></span>
+                    </p>
+                    <p class="text-lg mb-4" x-show="!completedSuccessfully">
+                        You ran out of time. Keep practicing!
+                    </p>
+                    <button
+                        @click="resetGame"
+                        class="w-full bg-green-500 text-white p-4 rounded-lg hover:bg-green-600 transition duration-300"
+                    >
+                        Play Again
+                    </button>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <script>
+        function storyTypingGame() {
+// Stories JSON (embedded directly in the script)
+            const STORIES = [
+    {
+        "id": 1,
+        "title": "The Whispers of Starlight",
+        "text": "{{NAME}} had always felt different. On her twelfth birthday, everything changed. While walking home from school through the park, a strange shimmer caught her eye. The air around her began to sparkle, and suddenly, she could hear the wind speaking. 'You are chosen,' the breeze whispered. {{NAME}} stood perfectly still, her heart racing. Her hands started to glow with a soft blue light. She discovered she could make flowers bloom instantly, calm storms with a gesture, and communicate with animals.",
+        "gender": "girl",
+        "difficulty": "medium",
+        "ageRange": {
+            "min": 7,
+            "max": 13
+        }
+    },
+    {
+        "id": 2,
+        "title": "The Forest of Whispers",
+        "text": "Weeks after discovering her powers, {{NAME}} ventured into the ancient forest near her grandmother's cottage. The trees seemed to recognize her, their branches bending slightly to create a path. A group of woodland creatures gathered around {{NAME}} - rabbits, deer, and even a wise old fox.",
+        "gender": "girl",
+        "difficulty": "medium",
+        "ageRange": {
+            "min": 7,
+            "max": 13
+        }
+    },
+    {
+        "id": 3,
+        "title": "Minecraft Portal Panic",
+        "text": "[NAME] never expected his ordinary afternoon to turn into an extraordinary adventure. While playing Minecraft on his computer, a strange glitch appeared. Suddenly, the screen began to swirl, and before he could move, [NAME] was sucked into the pixelated world.",
+        "gender": "boy",
+        "difficulty": "medium",
+        "ageRange": {
+            "min": 7,
+            "max": 13
+        }
+    },
+    {
+        "id": 4,
+        "title": "The Minecraft Quest",
+        "text": "Armed with courage and Minecraft skills, [NAME] began his mission to rescue the princess. He crafted advanced armor, enchanted his tools, and gathered a team of brave villagers. The obsidian tower loomed in the distance, a dark structure that seemed impossible to breach.",
+        "gender": "boy",
+        "difficulty": "medium",
+        "ageRange": {
+            "min": 7,
+            "max": 13
+        }
+    }
+];
+
+            return {
+    // Game State
+                gameState: 'registration',
+                playerName: '',
+                playerGender: '',
+                playerAge: null,
+                stories: [],
+    // Story Management
+                currentStory: null,
+                currentStoryText: '',
+                currentLevel: 1,
+    // Typing Mechanics
+                userInput: '',
+                characterIndex: 0,
+                score: 0,
+                progress: 0,
+                timeLeft: 600, // 10 minutes total
+                timer: null,
+    // Game Outcomes
+                completedSuccessfully: false,
+    // Initialize Stories
+                initializeStories() {
+                    this.stories = STORIES;
+    },
+    // Name Replacement Method
+                replaceNameInStory(story, playerName) {
+                    const namePlaceholders = [
+                        '{
+                {NAME
+                }
+            }',
+                        '[NAME
+            ]',
+                        '{PLAYER_NAME
+            }',
+                        'PROTAGONIST_NAME'
+        ];
+
+                    let modifiedStory = story.text;
+
+                    namePlaceholders.forEach(placeholder => {
+                        modifiedStory = modifiedStory.split(placeholder).join(playerName);
+        });
+
+                    return {
+                        ...story,
+                        text: modifiedStory
+        };
+    },
+    // Validate and Prepare Name
+                validateName(name) {
+                    let cleanedName = name.trim();
+                    cleanedName = cleanedName.charAt(0).toUpperCase() + cleanedName.slice(1);
+                    cleanedName = cleanedName.replace(/[^a-zA-Z\s
+        ]/g, '');
+                    return cleanedName || 'Player';
+    },
+    // Start Game Method
+                startGame() {
+                    if (!this.playerName || !this.playerGender || !this.playerAge) {
+                        alert('Please fill in all details');
+                        return;
+        }
+        // Validate name
+                    this.playerName = this.validateName(this.playerName);
+
+                    // Filter stories by player's gender or shared stories
+                    const availableStories = this.stories.filter(story =>
+                        story.gender === this.playerGender || story.gender === 'all'
+                    );
+
+                    // Select a random story
+                    let selectedStory = availableStories[Math.floor(Math.random() * availableStories.length)
+        ];
+
+                    // Replace name in the story
+                    this.currentStory = this.replaceNameInStory(selectedStory, this.playerName);
+                    this.currentStoryText = this.currentStory.text;
+                    this.gameState = 'playing';
+                    this.startTimer();
+    },
+    // Timer Management
+                startTimer() {
+                    this.timer = setInterval(() => {
+                        this.timeLeft--;
+
+                        // Level progression
+                        const totalLength = this.currentStoryText.length;
+                        const levelLength = Math.floor(totalLength / 5);
+                        const currentLevelProgress = Math.floor(this.characterIndex / levelLength) + 1;
+
+                        this.currentLevel = Math.min(currentLevelProgress,
+            5);
+                        this.progress = (this.characterIndex / totalLength) * 100;
+
+                        // Game over conditions
+                        if (this.timeLeft <= 0 || this.characterIndex >= this.currentStoryText.length) {
+                            this.endGame();
+            }
+        },
+        1000);
+    },
+    // Input Checking
+                checkInput() {
+        // Check if user input matches the next characters
+                    if (this.userInput === this.currentStoryText.slice(0, this.userInput.length)) {
+                        this.characterIndex = this.userInput.length;
+                        this.score = this.characterIndex;
+        } else {
+            // Optional: Add error handling or penalty
+                        this.userInput = this.userInput.slice(0,
+            -1);
+        }
+    },
+    // End Game Method
+                endGame() {
+                    clearInterval(this.timer);
+                    this.gameState = 'gameOver';
+                    this.completedSuccessfully = this.characterIndex >= this.currentStoryText.length;
+
+                    // Save game history
+                    const gameHistory = JSON.parse(localStorage.getItem('storyTyperHistory') || '[]');
+                    gameHistory.push({
+                        name: this.playerName,
+                        gender: this.playerGender,
+                        age: this.playerAge,
+                        story: this.currentStory.title,
+                        score: this.score,
+                        completed: this.completedSuccessfully,
+                        date: new Date().toISOString()
+        });
+                    localStorage.setItem('storyTyperHistory', JSON.stringify(gameHistory));
+    },
+    // Reset Game
+                resetGame() {
+                    this.gameState = 'registration';
+                    this.userInput = '';
+                    this.characterIndex = 0;
+                    this.score = 0;
+                    this.progress = 0;
+                    this.timeLeft = 600;
+                    this.currentLevel = 1;
+                    this.completedSuccessfully = false;
+    }
+}
+}
+    </script>
+</body>
+</html>
