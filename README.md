@@ -41,9 +41,11 @@ cd typing-tales
 
 2. Set up git hooks (for development):
 ```bash
-# Copy pre-commit hook
+# Copy pre-commit and pre-push hooks
 cp .hooks/pre-commit .git/hooks/
+cp .hooks/pre-push .git/hooks/
 chmod +x .git/hooks/pre-commit
+chmod +x .git/hooks/pre-push
 ```
 
 3. Set up a local web server (required for loading stories.json):

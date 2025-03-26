@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo "Running tests before push..."
+# Run bun tests
+bun test
+
+# Store the test command exit code
+RESULT=$?
+
+# If tests failed, prevent the push
+if [ $RESULT -ne 0 ]; then
+    echo "❌ Tests failed. Please fix the tests before pushing."
+    exit 1
+fi
+
+echo "✅ All tests passed!"
+exit 0 

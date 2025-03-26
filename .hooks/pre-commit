@@ -6,21 +6,15 @@ CWD=$(pwd)
 # Stash any changes not being committed
 git stash -q --keep-index
 
-echo "Running tests..."
-# Run bun tests
-bun test
+echo "Running prettier..."
+# Run prettier on staged files
+bun prettier --write $(git diff --cached --name-only --diff-filter=d | grep -E '\.(js|jsx|ts|tsx|json|css|scss|md)$')
 
-# Store the test command exit code
-RESULT=$?
+# Add the prettified files back to staging
+git add $(git diff --cached --name-only --diff-filter=d | grep -E '\.(js|jsx|ts|tsx|json|css|scss|md)$')
 
 # Restore stashed changes
 git stash pop -q
 
-# If tests failed, prevent the commit
-if [ $RESULT -ne 0 ]; then
-    echo "❌ Tests failed. Please fix the tests before committing."
-    exit 1
-fi
-
-echo "✅ All tests passed!"
+echo "✅ Code formatting complete!"
 exit 0 
