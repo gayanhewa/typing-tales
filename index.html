@@ -29,16 +29,31 @@
                         required
                         class="w-full p-4 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                    <select
-                        x-model="playerGender"
-                        required
-                        class="w-full p-4 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="">Select Gender</option>
-                        <option value="boy">Boy</option>
-                        <option value="girl">Girl</option>
-                        <option value="other">Other</option>
-                    </select>
+                    <div class="space-y-2">
+                        <p class="text-gray-700">Select Gender:</p>
+                        <div class="flex justify-center space-x-6">
+                            <label class="flex items-center space-x-2">
+                                <input
+                                    type="radio"
+                                    x-model="playerGender"
+                                    value="male"
+                                    required
+                                    class="form-radio text-blue-500"
+                                >
+                                <span>Boy</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input
+                                    type="radio"
+                                    x-model="playerGender"
+                                    value="female"
+                                    required
+                                    class="form-radio text-blue-500"
+                                >
+                                <span>Girl</span>
+                            </label>
+                        </div>
+                    </div>
                     <button
                         type="submit"
                         class="w-full bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600 transition duration-300"
@@ -126,78 +141,37 @@
 
     <script>
         function storyTypingGame() {
-// Stories JSON (embedded directly in the script)
-            const STORIES = [
-    {
-        "id": 1,
-        "title": "The Whispers of Starlight",
-        "text": "{{NAME}} had always felt different. On her twelfth birthday, everything changed. While walking home from school through the park, a strange shimmer caught her eye. The air around her began to sparkle, and suddenly, she could hear the wind speaking. 'You are chosen,' the breeze whispered. {{NAME}} stood perfectly still, her heart racing. Her hands started to glow with a soft blue light. She discovered she could make flowers bloom instantly, calm storms with a gesture, and communicate with animals.",
-        "gender": "girl",
-        "difficulty": "medium",
-        "ageRange": {
-            "min": 7,
-            "max": 13
-        }
-    },
-    {
-        "id": 2,
-        "title": "The Forest of Whispers",
-        "text": "Weeks after discovering her powers, {{NAME}} ventured into the ancient forest near her grandmother's cottage. The trees seemed to recognize her, their branches bending slightly to create a path. A group of woodland creatures gathered around {{NAME}} - rabbits, deer, and even a wise old fox.",
-        "gender": "girl",
-        "difficulty": "medium",
-        "ageRange": {
-            "min": 7,
-            "max": 13
-        }
-    },
-    {
-        "id": 3,
-        "title": "Minecraft Portal Panic",
-        "text": "[NAME] never expected his ordinary afternoon to turn into an extraordinary adventure. While playing Minecraft on his computer, a strange glitch appeared. Suddenly, the screen began to swirl, and before he could move, [NAME] was sucked into the pixelated world.",
-        "gender": "boy",
-        "difficulty": "medium",
-        "ageRange": {
-            "min": 7,
-            "max": 13
-        }
-    },
-    {
-        "id": 4,
-        "title": "The Minecraft Quest",
-        "text": "Armed with courage and Minecraft skills, [NAME] began his mission to rescue the princess. He crafted advanced armor, enchanted his tools, and gathered a team of brave villagers. The obsidian tower loomed in the distance, a dark structure that seemed impossible to breach.",
-        "gender": "boy",
-        "difficulty": "medium",
-        "ageRange": {
-            "min": 7,
-            "max": 13
-        }
-    }
-];
-
             return {
-    // Game State
+                // Game State
                 gameState: 'registration',
                 playerName: '',
                 playerGender: '',
                 stories: [],
-    // Story Management
+                // Story Management
                 currentStory: null,
                 currentStoryText: '',
                 currentLevel: 1,
-    // Typing Mechanics
+                // Typing Mechanics
                 userInput: '',
                 characterIndex: 0,
                 score: 0,
                 progress: 0,
                 timeLeft: 600, // 10 minutes total
                 timer: null,
-    // Game Outcomes
+                // Game Outcomes
                 completedSuccessfully: false,
-    // Initialize Stories
-                initializeStories() {
-                    this.stories = STORIES;
-    },
-    // Name Replacement Method
+                // Initialize Stories
+                async initializeStories() {
+                    try {
+                        const response = await fetch('stories.json');
+                        const data = await response.json();
+                        this.stories = data.stories;
+                    } catch (error) {
+                        console.error('Error loading stories:', error);
+                        alert('Failed to load stories. Please refresh the page.');
+                    }
+                },
+                // Name Replacement Method
                 replaceNameInStory(story, playerName) {
                     const namePlaceholders = [
                         '{{NAME}}',
@@ -217,14 +191,14 @@
                         text: modifiedStory
                     };
                 },
-    // Validate and Prepare Name
+                // Validate and Prepare Name
                 validateName(name) {
                     let cleanedName = name.trim();
                     cleanedName = cleanedName.charAt(0).toUpperCase() + cleanedName.slice(1);
                     cleanedName = cleanedName.replace(/[^a-zA-Z\s]/g, '');
                     return cleanedName || 'Player';
                 },
-    // Start Game Method
+                // Start Game Method
                 startGame() {
                     if (!this.playerName || !this.playerGender) {
                         alert('Please fill in all details');
@@ -233,10 +207,19 @@
                     // Validate name
                     this.playerName = this.validateName(this.playerName);
 
-                    // Filter stories by player's gender or shared stories
-                    const availableStories = this.stories.filter(story =>
-                        story.gender === this.playerGender || story.gender === 'all'
-                    );
+                    // Filter stories by player's gender
+                    const availableStories = this.stories.filter(story => {
+                        // Map the story gender to match our radio button values
+                        const storyGender = story.gender === 'boy' ? 'male' : 
+                                          story.gender === 'girl' ? 'female' : 
+                                          story.gender;
+                        return storyGender === this.playerGender;
+                    });
+
+                    // If no stories available for the selected gender, use all stories
+                    if (availableStories.length === 0) {
+                        availableStories = this.stories;
+                    }
 
                     // Select a random story
                     let selectedStory = availableStories[Math.floor(Math.random() * availableStories.length)];
@@ -247,7 +230,7 @@
                     this.gameState = 'playing';
                     this.startTimer();
                 },
-    // Timer Management
+                // Timer Management
                 startTimer() {
                     this.timer = setInterval(() => {
                         this.timeLeft--;
@@ -266,7 +249,7 @@
                         }
                     }, 1000);
                 },
-    // Input Checking
+                // Input Checking
                 checkInput() {
                     // Check if user input matches the next characters
                     if (this.userInput === this.currentStoryText.slice(0, this.userInput.length)) {
@@ -277,7 +260,7 @@
                         this.userInput = this.userInput.slice(0, -1);
                     }
                 },
-    // End Game Method
+                // End Game Method
                 endGame() {
                     clearInterval(this.timer);
                     this.gameState = 'gameOver';
@@ -295,7 +278,7 @@
                     });
                     localStorage.setItem('storyTyperHistory', JSON.stringify(gameHistory));
                 },
-    // Reset Game
+                // Reset Game
                 resetGame() {
                     this.gameState = 'registration';
                     this.userInput = '';
