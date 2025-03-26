@@ -29,25 +29,6 @@
                         required
                         class="w-full p-4 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                    <select
-                        x-model="playerGender"
-                        required
-                        class="w-full p-4 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="">Select Gender</option>
-                        <option value="boy">Boy</option>
-                        <option value="girl">Girl</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <input
-                        x-model.number="playerAge"
-                        type="number"
-                        placeholder="Your Age"
-                        min="6"
-                        max="13"
-                        required
-                        class="w-full p-4 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
                     <button
                         type="submit"
                         class="w-full bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600 transition duration-300"
@@ -77,13 +58,10 @@
 
                 <!-- Story Display -->
                 <div class="mb-6 p-4 bg-blue-50 rounded-lg h-64 overflow-auto">
-                    <p
-                        class="text-lg leading-relaxed":class="{
-                            'text-gray-400': characterIndex > 0,
-                            'text-black': characterIndex === 0
-}"
-                    >
-                        <span x-text="currentStoryText.slice(0, characterIndex)"></span><span x-text="currentStoryText.slice(characterIndex)" class="text-gray-400"></span>
+                    <p class="text-lg leading-relaxed">
+                        <span class="text-green-600" x-text="currentStoryText.slice(0, characterIndex)"></span>
+                        <span class="text-red-600" x-show="hasError" x-text="userInput.slice(characterIndex)"></span>
+                        <span class="text-gray-400" x-show="!hasError" x-text="currentStoryText.slice(characterIndex)"></span>
                     </p>
                 </div>
 
@@ -187,8 +165,7 @@
     // Game State
                 gameState: 'registration',
                 playerName: '',
-                playerGender: '',
-                playerAge: null,
+                playerGender: 'other',
                 stories: [],
     // Story Management
                 currentStory: null,
@@ -203,6 +180,8 @@
                 timer: null,
     // Game Outcomes
                 completedSuccessfully: false,
+    // Error State
+                hasError: false,
     // Initialize Stories
                 initializeStories() {
                     this.stories = STORIES;
@@ -236,20 +215,15 @@
                 },
     // Start Game Method
                 startGame() {
-                    if (!this.playerName || !this.playerGender || !this.playerAge) {
-                        alert('Please fill in all details');
+                    if (!this.playerName) {
+                        alert('Please enter your name');
                         return;
                     }
                     // Validate name
                     this.playerName = this.validateName(this.playerName);
 
-                    // Filter stories by player's gender or shared stories
-                    const availableStories = this.stories.filter(story =>
-                        story.gender === this.playerGender || story.gender === 'all'
-                    );
-
-                    // Select a random story
-                    let selectedStory = availableStories[Math.floor(Math.random() * availableStories.length)];
+                    // Select a random story from all stories
+                    let selectedStory = this.stories[Math.floor(Math.random() * this.stories.length)];
 
                     // Replace name in the story
                     this.currentStory = this.replaceNameInStory(selectedStory, this.playerName);
@@ -278,13 +252,15 @@
                 },
     // Input Checking
                 checkInput() {
-                    // Check if user input matches the next characters
-                    if (this.userInput === this.currentStoryText.slice(0, this.userInput.length)) {
+                    const expectedText = this.currentStoryText.slice(0, this.userInput.length);
+                    const isCorrect = this.userInput === expectedText;
+                    
+                    if (isCorrect) {
                         this.characterIndex = this.userInput.length;
                         this.score = this.characterIndex;
+                        this.hasError = false;
                     } else {
-                        // Optional: Add error handling or penalty
-                        this.userInput = this.userInput.slice(0, -1);
+                        this.hasError = true;
                     }
                 },
     // End Game Method
@@ -298,7 +274,6 @@
                     gameHistory.push({
                         name: this.playerName,
                         gender: this.playerGender,
-                        age: this.playerAge,
                         story: this.currentStory.title,
                         score: this.score,
                         completed: this.completedSuccessfully,
@@ -316,6 +291,7 @@
                     this.timeLeft = 600;
                     this.currentLevel = 1;
                     this.completedSuccessfully = false;
+                    this.hasError = false;
                 }
             }
         }
