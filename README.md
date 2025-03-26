@@ -29,17 +29,21 @@ TypingTales is an engaging web-based typing practice application designed specif
 
 - A modern web browser (Chrome, Firefox, Safari, Edge)
 - Internet connection for loading resources
+- Basic typing skills
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/typing-tutor.git
+git clone https://github.com/yourusername/typing-tales.git
+cd typing-tales
 ```
 
-2. Navigate to the project directory:
+2. Set up git hooks (for development):
 ```bash
-cd typing-tutor
+# Copy pre-commit hook
+cp .hooks/pre-commit .git/hooks/
+chmod +x .git/hooks/pre-commit
 ```
 
 3. Set up a local web server (required for loading stories.json):
@@ -77,9 +81,10 @@ http://localhost:8000
 ### File Structure
 
 ```
-typing-tutor/
+typing-tales/
 ├── index.html          # Main application file
 ├── stories.json        # Story data
+├── .hooks/             # Git hooks
 ├── README.md          # This file
 └── assets/            # (Optional) For future assets
     ├── images/

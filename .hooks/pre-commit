@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# Store the current working directory
+CWD=$(pwd)
+
+# Stash any changes not being committed
+git stash -q --keep-index
+
+echo "Running tests..."
+# Run bun tests
+bun test
+
+# Store the test command exit code
+RESULT=$?
+
+# Restore stashed changes
+git stash pop -q
+
+# If tests failed, prevent the commit
+if [ $RESULT -ne 0 ]; then
+    echo "❌ Tests failed. Please fix the tests before committing."
+    exit 1
+fi
+
+echo "✅ All tests passed!"
+exit 0 
