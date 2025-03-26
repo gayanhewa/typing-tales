@@ -36,7 +36,7 @@ TypingTales is an engaging web-based typing practice application designed specif
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/typing-tales.git
+git clone https://github.com/gayanhewa/typing-tales.git
 cd typing-tales
 ```
 
@@ -88,13 +88,15 @@ http://localhost:8000
 
 ```
 typing-tales/
-├── index.html          # Main application file
-├── stories.json        # Story data
-├── .hooks/             # Git hooks
-├── README.md          # This file
-└── assets/            # (Optional) For future assets
-    ├── images/
-    └── styles/
+├── public/             # Public assets
+│   ├── index.html     # Main application file
+│   ├── game.js        # Game logic
+│   └── stories.json   # Story data
+├── src/               # Source files
+│   └── test/         # Test files
+├── .hooks/           # Git hooks
+├── README.md         # This file
+└── package.json      # Project configuration
 ```
 
 ### Browser Support
@@ -106,7 +108,7 @@ typing-tales/
 
 ## 📚 Story Format
 
-Stories are stored in `stories.json` with the following structure:
+Stories are stored in `public/stories.json` with the following structure:
 
 ```json
 {
@@ -120,6 +122,8 @@ Stories are stored in `stories.json` with the following structure:
   ]
 }
 ```
+
+Want to add more stories? [Contribute to the repository](https://github.com/gayanhewa/typing-tales)!
 
 ## 🔒 Privacy & Data
 
@@ -140,7 +144,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
@@ -150,7 +154,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, please open an issue in the GitHub repository or contact us at support@typingtales.org
+For support, please open an issue in the [GitHub repository](https://github.com/gayanhewa/typing-tales) or contact us at gayanhewa@gmail.com
 
 ## 🔄 Updates
 
@@ -162,4 +166,4 @@ For support, please open an issue in the GitHub repository or contact us at supp
 
 ## 🌐 Website
 
-Visit [typingtales.org](https://typingtales.org) to try the application online.
+Visit typingtales.org to try the application online.
