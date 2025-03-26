@@ -39,15 +39,6 @@
                         <option value="girl">Girl</option>
                         <option value="other">Other</option>
                     </select>
-                    <input
-                        x-model.number="playerAge"
-                        type="number"
-                        placeholder="Your Age"
-                        min="6"
-                        max="13"
-                        required
-                        class="w-full p-4 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
                     <button
                         type="submit"
                         class="w-full bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600 transition duration-300"
@@ -188,7 +179,6 @@
                 gameState: 'registration',
                 playerName: '',
                 playerGender: '',
-                playerAge: null,
                 stories: [],
     // Story Management
                 currentStory: null,
@@ -236,7 +226,7 @@
                 },
     // Start Game Method
                 startGame() {
-                    if (!this.playerName || !this.playerGender || !this.playerAge) {
+                    if (!this.playerName || !this.playerGender) {
                         alert('Please fill in all details');
                         return;
                     }
@@ -298,7 +288,6 @@
                     gameHistory.push({
                         name: this.playerName,
                         gender: this.playerGender,
-                        age: this.playerAge,
                         story: this.currentStory.title,
                         score: this.score,
                         completed: this.completedSuccessfully,
