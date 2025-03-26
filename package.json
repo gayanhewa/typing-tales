@@ -9,5 +9,8 @@
   },
   "devDependencies": {
     "bun-types": "latest"
+  },
+  "dependencies": {
+    "prettier": "^3.5.3"
   }
-} 
+}
