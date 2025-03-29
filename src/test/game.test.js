@@ -6,7 +6,7 @@ const localStorageMock = {
   getItem: mock(() => null),
   setItem: mock(() => {}),
   removeItem: mock(() => {}),
-  clear: mock(() => {}),
+  clear: mock(() => {})
 };
 global.localStorage = localStorageMock;
 
@@ -17,20 +17,20 @@ const testStories = {
       id: "1",
       title: "Test Story 1",
       text: "Hello {{NAME}}, welcome to the story!",
-      gender: "boy",
+      gender: "boy"
     },
     {
       id: "2",
       title: "Test Story 2",
       text: "Hi [NAME], this is another story!",
-      gender: "girl",
-    },
-  ],
+      gender: "girl"
+    }
+  ]
 };
 
 // Mock fetch
 global.fetch = mock(async () => ({
-  json: async () => testStories,
+  json: async () => testStories
 }));
 
 // Mock browser APIs
@@ -56,7 +56,7 @@ describe("storyTypingGame", () => {
 
     // Reset fetch mock implementation
     global.fetch.mockImplementation(async () => ({
-      json: async () => testStories,
+      json: async () => testStories
     }));
 
     // Create new game instance
@@ -72,15 +72,11 @@ describe("storyTypingGame", () => {
     });
 
     test("should handle fetch errors gracefully", async () => {
-      global.fetch.mockImplementationOnce(() =>
-        Promise.reject(new Error("Network error")),
-      );
+      global.fetch.mockImplementationOnce(() => Promise.reject(new Error("Network error")));
 
       await game.initializeStories();
       expect(global.console.error).toHaveBeenCalled();
-      expect(global.alert).toHaveBeenCalledWith(
-        "Failed to load stories. Please refresh the page.",
-      );
+      expect(global.alert).toHaveBeenCalledWith("Failed to load stories. Please refresh the page.");
     });
 
     test("should restore saved game state if available", async () => {
@@ -88,8 +84,8 @@ describe("storyTypingGame", () => {
         JSON.stringify({
           playerName: "TestPlayer",
           playerGender: "male",
-          usedStoryIds: ["1"],
-        }),
+          usedStoryIds: ["1"]
+        })
       );
 
       await game.initializeStories();
@@ -112,7 +108,7 @@ describe("storyTypingGame", () => {
       const story = {
         id: "1",
         title: "Test Story",
-        text: "Hello {{NAME}}, welcome [NAME]!",
+        text: "Hello {{NAME}}, welcome [NAME]!"
       };
       const result = game.replaceNameInStory(story, "John");
       expect(result.text).toBe("Hello John, welcome John!");
@@ -193,9 +189,7 @@ describe("storyTypingGame", () => {
 
     test("should save game history", () => {
       game.endGame();
-      expect(localStorageMock.getItem).toHaveBeenCalledWith(
-        "storyTyperHistory",
-      );
+      expect(localStorageMock.getItem).toHaveBeenCalledWith("storyTyperHistory");
       expect(localStorageMock.setItem).toHaveBeenCalled();
     });
 

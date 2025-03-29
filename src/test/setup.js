@@ -5,7 +5,7 @@ global.window = {};
 global.document = {
   getElementById: () => null,
   querySelector: () => null,
-  querySelectorAll: () => [],
+  querySelectorAll: () => []
 };
 
 // Mock Set constructor to handle the Set operations in the game
