@@ -2,6 +2,8 @@
 
 TypingTales is an engaging web-based typing practice application designed specifically for children aged 6-13. It combines the fun of storytelling with typing practice, creating a personalized learning experience that helps kids improve their typing skills while enjoying themselves.
 
+[![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2Fa33f8e9c-2995-47bc-937f-42e5048e8713%3Flabel%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com/servers/843733/sites/2662120)
+
 ## 🌟 Features
 
 - **Personalized Stories**: Stories are customized with the child's name as the main character
